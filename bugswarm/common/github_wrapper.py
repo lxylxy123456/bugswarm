@@ -33,7 +33,10 @@ class GitHubWrapper(object):
         self._tokens = deque(tokens)
         self._session = cachecontrol.CacheControl(requests.Session())
         # Start with the first token. We lazily switch tokens as each hits its quota limit.
-        self._session.headers['Authorization'] = 'token %s' % self._tokens[0]
+        log.error('AUTH TOKEN:', tokens)
+        if self._tokens[0]:
+            log.error('USE TOKEN:', self._tokens[0])
+            self._session.headers['Authorization'] = 'token %s' % self._tokens[0]
 
     def get(self, url: str):
         """
