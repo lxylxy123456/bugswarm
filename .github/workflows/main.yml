@@ -81,7 +81,7 @@ jobs:
           python3 -m unittest discover
 
   job_3:
-    if: github.repository == 'BugSwarm/bugswarm'
+    if: github.repository == 'lxylxy123456/bugswarm'
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
