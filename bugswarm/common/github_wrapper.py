@@ -80,6 +80,8 @@ class GitHubWrapper(object):
                     log.error(repr(url))
                     log.error('Request for my url failed:', url)
                     log.error('Exception is:', e)
+                    log.error('TXT:', response.text)
+                    log.debug('TXT:', response.text)
                     log.error('AAA')
 
                 # If the status code is 403 (Forbidden), then we may have exceeded our GitHub API quota.
