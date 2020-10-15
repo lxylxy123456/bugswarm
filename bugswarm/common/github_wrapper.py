@@ -74,8 +74,12 @@ class GitHubWrapper(object):
                 elif response.status_code == 422:
                     return None, None
                 else:
+                    print('VVV')
+                    print(self.__dict__)
+                    print(repr(url))
                     log.error('Request for url failed:', url)
                     log.error('Exception:', e)
+                    print('AAA')
 
                 # If the status code is 403 (Forbidden), then we may have exceeded our GitHub API quota.
                 # In this case, we should verify that the quota was exceeded and, if so, wait until the quota is reset.
