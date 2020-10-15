@@ -108,6 +108,12 @@ jobs:
         run: |
           pip install flake8==3.7.9
           flake8 . --count --max-line-length=120 --statistics
+      - name: Test Curl
+        run: |
+          curl https://api.github.com/repos/Whiley/WhileyCompiler/git/commits/fe918979b88a32c0a797bf5039e1673370063e9c || echo FAIL: $?
+      - name: Check file
+        run: |
+          cat bugswarm/common/credentials.py
       - name: Test Analyzer
         working-directory: ./tests/analyzer
         run: |
