@@ -48,6 +48,7 @@ class GitHubWrapper(object):
             raise TypeError('The provided URL must be a string.')
         if urlparse(url).netloc != 'api.github.com':
             raise ValueError('The provided URL is not for the GitHub API.')
+        log.debug('LOG:', repr(url))
 
         retry_back_off = 5  # Seconds.
         retry_count = 0
@@ -74,12 +75,12 @@ class GitHubWrapper(object):
                 elif response.status_code == 422:
                     return None, None
                 else:
-                    print('VVV')
-                    print(self.__dict__)
-                    print(repr(url))
+                    log.debug('VVV')
+                    log.debug(self.__dict__)
+                    log.debug(repr(url))
                     log.error('Request for url failed:', url)
                     log.error('Exception:', e)
-                    print('AAA')
+                    log.debug('AAA')
 
                 # If the status code is 403 (Forbidden), then we may have exceeded our GitHub API quota.
                 # In this case, we should verify that the quota was exceeded and, if so, wait until the quota is reset.
