@@ -2,84 +2,6 @@ name: Build
 on: [push,pull_request]
 
 jobs:
-  job_1:
-    if: github.repository == 'BugSwarm/bugswarm-dev'
-    runs-on: self-hosted
-    container: bugswarm/images:ubuntu-16.04
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Add Credentials
-        env:
-          gh_token: ${{ secrets.GH_TOKEN }}
-        run: |
-          cp bugswarm/common/credentials.sample.py bugswarm/common/credentials.py
-          sed -i "s~''~'#'~g" bugswarm/common/credentials.py
-          sed -i "s~\[\]~\['${gh_token}'\]~g" bugswarm/common/credentials.py
-      - name: Installing Dependencies
-        run: |
-          python3 -m pip install --upgrade pip
-          pip3 install .
-      - name: Lint with flake8
-        run: |
-          pip3 install flake8==3.7.9
-          flake8 . --count --max-line-length=120 --statistics
-      - name: Test Analyzer
-        working-directory: ./tests/analyzer
-        run: |
-          python3 -m unittest discover
-      - name: Test Classifier
-        working-directory: ./pair-classifier/tests
-        run: |
-          python3 -m unittest discover
-      - name: Test PairFilter
-        working-directory: ./pair-filter/tests
-        run: |
-          python3 -m unittest discover
-      - name: Test Reproducer - PairChooser
-        working-directory: ./reproducer/tests
-        run: |
-          python3 -m unittest discover
-
-  job_2:
-    if: github.repository == 'BugSwarm/bugswarm-dev'
-    runs-on: self-hosted
-    container: bugswarm/images:ubuntu-18.04
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Add Credentials
-        env:
-          gh_token: ${{ secrets.GH_TOKEN }}
-        run: |
-          cp bugswarm/common/credentials.sample.py bugswarm/common/credentials.py
-          sed -i "s~''~'#'~g" bugswarm/common/credentials.py
-          sed -i "s~\[\]~\['${gh_token}'\]~g" bugswarm/common/credentials.py
-      - name: Installing Dependencies
-        run: |
-          python3 -m pip install --upgrade pip
-          pip3 install .
-      - name: Lint with flake8
-        run: |
-          pip3 install flake8==3.7.9
-          flake8 . --count --max-line-length=120 --statistics
-      - name: Test Analyzer
-        working-directory: ./tests/analyzer
-        run: |
-          python3 -m unittest discover
-      - name: Test Classifier
-        working-directory: ./pair-classifier/tests
-        run: |
-          python3 -m unittest discover
-      - name: Test PairFilter
-        working-directory: ./pair-filter/tests
-        run: |
-          python3 -m unittest discover
-      - name: Test Reproducer - PairChooser
-        working-directory: ./reproducer/tests
-        run: |
-          python3 -m unittest discover
-
   job_3:
     if: github.repository == 'lxylxy123456/bugswarm'
     runs-on: ${{ matrix.os }}
@@ -114,6 +36,9 @@ jobs:
       - name: Check file
         run: |
           cat bugswarm/common/credentials.py
+      - name: Check file 2
+        run: |
+          cat bugswarm/common/github_wrapper.py
       - name: Test Analyzer
         working-directory: ./tests/analyzer
         run: |
