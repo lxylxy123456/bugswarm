@@ -18,6 +18,7 @@ if 'mock':
     from bugswarm.common.github_wrapper import GitHubWrapper
     github_cache = 'github_cache/'
     lxy_ori = GitHubWrapper.get
+
     def lxy_build_name(url: str):
         return join(github_cache, url.replace('/', '-'))
 
