@@ -37,13 +37,13 @@ class Test(unittest.TestCase):
         self.dispatcher = Dispatcher()
         self.travis_wrapper = TravisWrapper()
         self.analyzer = Analyzer()
-        self.github_get = GitHubWrapper.get
+        github_get = GitHubWrapper.get
 
         def github_get_cached_name(url: str):
             return join(self.github_cache, url.replace('/', '-'))
 
         def github_get_build_cache(self, url: str):
-            ans = self.github_get(self, url)
+            ans = github_get(self, url)
             with open(github_get_cached_name(url), 'w') as f:
                 json.dump(ans[1], f)
             return ans
@@ -53,7 +53,7 @@ class Test(unittest.TestCase):
                 ans = json.load(f)
             with requests_mock.Mocker() as m:
                 m.get(url, text=json.dumps(ans))
-                return self.github_get(self, url)
+                return github_get(self, url)
 
         GitHubWrapper.get = github_get_use_cache
 
