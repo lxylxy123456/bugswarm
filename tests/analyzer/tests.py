@@ -2,6 +2,7 @@ import json
 import unittest
 import warnings
 import os
+import requests_mock
 
 from os import listdir
 from os.path import isfile
@@ -11,32 +12,7 @@ from os.path import join
 from bugswarm.analyzer.analyzer import Analyzer
 from bugswarm.analyzer.dispatcher import Dispatcher
 from bugswarm.common.travis_wrapper import TravisWrapper
-
-if 'mock':
-    # pip3 install requests-mock
-    import requests_mock
-    from bugswarm.common.github_wrapper import GitHubWrapper
-    github_cache = 'github_cache/'
-    lxy_ori = GitHubWrapper.get
-
-    def lxy_build_name(url: str):
-        return join(github_cache, url.replace('/', '-'))
-
-    def lxy_build_cache(self, url: str):
-        ans = lxy_ori(self, url)
-        with open(lxy_build_name(url), 'w') as f:
-            json.dump(ans[1], f)
-        return ans
-
-    def lxy_use_cache(self, url: str):
-        with open(lxy_build_name(url), 'r') as f:
-            a = json.load(f)
-        with requests_mock.Mocker() as m:
-            m.get(url, text=json.dumps(a))
-            return lxy_ori(self, url)
-
-    # GitHubWrapper.get = lxy_build_cache
-    GitHubWrapper.get = lxy_use_cache
+from bugswarm.common.github_wrapper import GitHubWrapper
 
 
 class Test(unittest.TestCase):
@@ -54,12 +30,29 @@ class Test(unittest.TestCase):
     javascript_mocha = 'javascript/mocha/'
     javascript_jest = 'javascript/jest/'
     javascript_multiple_frameworks = 'javascript/multiple_frameworks/'
+    github_cache = 'github_cache/'
 
     def __init__(self, *args, **kwargs):
         super(Test, self).__init__(*args, **kwargs)
         self.dispatcher = Dispatcher()
         self.travis_wrapper = TravisWrapper()
         self.analyzer = Analyzer()
+        self.github_get = GitHubWrapper.get
+
+        def github_get_build_cache(self, url: str):
+            ans = self.github_get(self, url)
+            with open(self.github_get_cached_name(url), 'w') as f:
+                json.dump(ans[1], f)
+            return ans
+
+        def github_get_use_cache(self, url: str):
+            with open(self.github_get_cached_name(url), 'r') as f:
+                ans = json.load(f)
+            with requests_mock.Mocker() as m:
+                m.get(url, text=json.dumps(ans))
+                return self.github_get(self, url)
+
+        GitHubWrapper.get = github_get_use_cache
 
     @staticmethod
     def my_split(l):
@@ -118,6 +111,9 @@ class Test(unittest.TestCase):
     @staticmethod
     def strip_quote(string):
         return string.replace('"', '')
+
+    def github_get_cached_name(self, url: str):
+        return join(self.github_cache, url.replace('/', '-'))
 
     def compare_with_tt(self, my_result, tt_data):
         """
