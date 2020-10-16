@@ -14,27 +14,29 @@ from bugswarm.common.travis_wrapper import TravisWrapper
 
 if 'mock':
     # pip3 install requests-mock
-    import pickle
-    import requests
     import requests_mock
     from bugswarm.common.github_wrapper import GitHubWrapper
     github_cache = 'github_cache/'
     lxy_ori = GitHubWrapper.get
     def lxy_build_name(url: str):
         return join(github_cache, url.replace('/', '-'))
+
     def lxy_build_cache(self, url: str):
         ans = lxy_ori(self, url)
         with open(lxy_build_name(url), 'w') as f:
             json.dump(ans[1], f)
         return ans
+
     def lxy_use_cache(self, url: str):
         with open(lxy_build_name(url), 'r') as f:
             a = json.load(f)
         with requests_mock.Mocker() as m:
             m.get(url, text=json.dumps(a))
             return lxy_ori(self, url)
-    #GitHubWrapper.get = lxy_build_cache
+
+    # GitHubWrapper.get = lxy_build_cache
     GitHubWrapper.get = lxy_use_cache
+
 
 class Test(unittest.TestCase):
     ant = 'ant/'
