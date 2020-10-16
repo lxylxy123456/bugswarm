@@ -39,14 +39,17 @@ class Test(unittest.TestCase):
         self.analyzer = Analyzer()
         self.github_get = GitHubWrapper.get
 
+        def github_get_cached_name(url: str):
+            return join(self.github_cache, url.replace('/', '-'))
+
         def github_get_build_cache(self, url: str):
             ans = self.github_get(self, url)
-            with open(self.github_get_cached_name(url), 'w') as f:
+            with open(github_get_cached_name(url), 'w') as f:
                 json.dump(ans[1], f)
             return ans
 
         def github_get_use_cache(self, url: str):
-            with open(self.github_get_cached_name(url), 'r') as f:
+            with open(github_get_cached_name(url), 'r') as f:
                 ans = json.load(f)
             with requests_mock.Mocker() as m:
                 m.get(url, text=json.dumps(ans))
@@ -111,9 +114,6 @@ class Test(unittest.TestCase):
     @staticmethod
     def strip_quote(string):
         return string.replace('"', '')
-
-    def github_get_cached_name(self, url: str):
-        return join(self.github_cache, url.replace('/', '-'))
 
     def compare_with_tt(self, my_result, tt_data):
         """
