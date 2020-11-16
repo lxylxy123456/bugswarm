@@ -78,6 +78,8 @@ If you use our infrastructure or dataset, please cite our paper as follows:
 
     Spawner is a docker image that contain all required packages in `provision.sh` and can spawn pipeline jobs. If using spawner, the host only needs to install Docker.
 
+    For details about spawner, please see [spawner README](spawner/README.md).
+
     1. Build the spawner using docker
         ```sh
         $ cd spawner
