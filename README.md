@@ -101,7 +101,8 @@ If you use our infrastructure or dataset, please cite our paper as follows:
         ```sh
         $ git pull
         ```
-    1. Continue the following steps in the spawner container
+
+1. If you are using the spawner container, continue the following commands in the containers. If you are using the host, continue with the host.
 
 1. Mongo should now be up and running, test the connection by opening a new Terminal and use:
     ```
